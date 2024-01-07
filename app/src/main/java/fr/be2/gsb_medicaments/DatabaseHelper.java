@@ -132,6 +132,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String formePharmaceutiqueMedicament = cursor.getString(cursor.getColumnIndex("Forme_pharmaceutique"));
                 String voiesAdminMedicament = cursor.getString(cursor.getColumnIndex("Voies_dadministration"));
                 String titulairesMedicament = cursor.getString(cursor.getColumnIndex("Titulaires"));
+                String statutAdministratif = cursor.getString(cursor.getColumnIndex("Statut_administratif_de_lAMM"));
 
                 // Créer un objet Medicament avec les valeurs récupérées
                 Medicament medicament = new Medicament();
@@ -140,6 +141,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 medicament.setFormePharmaceutique(formePharmaceutiqueMedicament);
                 medicament.setVoiesAdmin(voiesAdminMedicament);
                 medicament.setTitulaires(titulairesMedicament);
+                medicament.setStatutAdministratif(statutAdministratif);
 
                 // Ajouter l'objet Medicament à la liste
                 medicamentList.add(medicament);
