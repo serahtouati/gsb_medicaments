@@ -1,5 +1,7 @@
 package fr.be2.gsb_medicaments;
 
+
+
 import android.content.Context;
         import android.content.res.AssetManager;
         import android.database.Cursor;
@@ -7,7 +9,9 @@ import android.content.Context;
         import android.database.sqlite.SQLiteException;
         import android.database.sqlite.SQLiteOpenHelper;
         import android.util.Log;
-        import android.widget.Toast;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
         import java.io.File;
 import java.text.Normalizer;
@@ -224,5 +228,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(normalized).replaceAll("");
     }
+
 
 }
