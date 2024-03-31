@@ -114,13 +114,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         String SQLSubstance = "SELECT CODE_CIS FROM CIS_COMPO_bdpm WHERE replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(upper(Denomination_substance), 'Â','A'),'Ä','A'),'À','A'),'É','E'),'Á','A'),'Ï','I'), 'Ê','E'),'È','E'),'Ô','O'),'Ü','U'), 'Ç','C' ) LIKE ?" ;
         // La requête SQL de recherche
-        String query = "SELECT * FROM CIS_bdpm WHERE " +
+        String query = "SELECT *,(select count(*) from CIS_COMPO_bdpm c where c.Code_CIS=m.Code_CIS) as nb_molecule FROM CIS_bdpm m  WHERE " +
                 "Denomination_du_medicament LIKE ? AND " +
                 "Forme_pharmaceutique LIKE ? AND " +
                 "Titulaires LIKE ? AND " +
                 "Code_CIS IN (" +SQLSubstance+ ")" +
                 finSQL;
-
         // Les valeurs à remplacer dans la requête
 
 
@@ -137,6 +136,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String voiesAdminMedicament = cursor.getString(cursor.getColumnIndex("Voies_dadministration"));
                 String titulairesMedicament = cursor.getString(cursor.getColumnIndex("Titulaires"));
                 String statutAdministratif = cursor.getString(cursor.getColumnIndex("Statut_administratif_de_lAMM"));
+                String CountMolecule = cursor.getString(cursor.getColumnIndex("nb_molecule"));
+
 
                 // Créer un objet Medicament avec les valeurs récupérées
                 Medicament medicament = new Medicament();
@@ -146,6 +147,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 medicament.setVoiesAdmin(voiesAdminMedicament);
                 medicament.setTitulaires(titulairesMedicament);
                 medicament.setStatutAdministratif(statutAdministratif);
+                medicament.setNbMolecule(CountMolecule.toString());
 
                 // Ajouter l'objet Medicament à la liste
                 medicamentList.add(medicament);
@@ -161,6 +163,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return medicamentList;
     }
+
+    public List<String> getCompositionMedicament(int codeCIS) {
+        List<String> compositionList = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM CIS_compo_bdpm WHERE Code_CIS = ?", new String[]{String.valueOf(codeCIS)});
+        int i=0;
+        if (cursor.moveToFirst()) {
+            do {
+                i++;
+                String substance = cursor.getString(cursor.getColumnIndex("Denomination_substance"));
+                String dosage = cursor.getString(cursor.getColumnIndex("Dosage_substance"));
+                compositionList.add(i+":"+substance + "(" + dosage + ")");
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return compositionList;
+    }
+
 
     private void copydatabase() {
 
