@@ -41,7 +41,18 @@ public class MedicamentAdapter extends ArrayAdapter<Medicament> {
         tvStatutAdmin.setText(medicament.getStatutAdministratif());
         tvNbMolecule.setText(medicament.getNbMolecule());
 
+        int nbMolecule = Integer.parseInt(medicament.getNbMolecule());
+        String moleculeText = nbMolecule + " " + pluriels(nbMolecule, "molécule");
+        tvNbMolecule.setText(moleculeText);
+
         // Return the completed view to render on screen
         return convertView;
+    }
+    static String pluriels(int nbr, String mot){
+        String un_s="";
+        if (nbr>1){
+            un_s="s";
+        }
+        return (mot+un_s);
     }
 }

@@ -178,12 +178,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 compositionList.add(i+":"+substance + "(" + dosage + ")");
             } while (cursor.moveToNext());
         }
-
         cursor.close();
         db.close();
 
         return compositionList;
     }
+
+
+    public List<String> getPresentationMedicament(int codeCIS) {
+        List<String> presentationList = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor =  db.rawQuery("SELECT Libelle_presentation FROM CIS_CIP_bdpm WHERE Code_CIS = ?", new String[]{String.valueOf(codeCIS)});
+        int i=0;
+        if (cursor.moveToFirst()) {
+            do {
+                i++;
+                String presentation = cursor.getString(cursor.getColumnIndex("Libelle_presentation"));
+                presentationList.add(i+":"+presentation);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return presentationList;
+    }
+
+
 
 
     private void copydatabase() {
@@ -252,6 +274,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(normalized).replaceAll("");
     }
-
 
 }

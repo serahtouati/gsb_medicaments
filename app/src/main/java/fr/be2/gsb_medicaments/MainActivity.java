@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
                                                    }
                                                }
         );
-
     }
 
     private void setupVoiesAdminSpinner() {
@@ -87,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
     private void performSearch() {
         // TODO: Implement the search logic using the entered criteria and update the ListView
         String denomination = editTextDenomination.getText().toString().trim();
-        ;String formePharmaceutique = editTextFormePharmaceutique.getText().toString().trim();
+        ;
+        String formePharmaceutique = editTextFormePharmaceutique.getText().toString().trim();
         String titulaires = editTextTitulaires.getText().toString().trim();
         String denominationSubstance = editTextDenominationSubstance.getText().toString().trim();
         String voiesAdmin = spinnerVoiesAdmin.getSelectedItem().toString();
@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         MedicamentAdapter adapter = new MedicamentAdapter(this, searchResults);
         listViewResults.setAdapter(adapter);
     }
+
     private void cacherClavier() {
         // Obtenez le gestionnaire de fenêtre
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(vueCourante.getWindowToken(), 0);
         }
     }
+
     private boolean isUserAuthenticated() {
 
         SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
@@ -130,36 +132,51 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    public void quitter (View view){
+    public void quitter(View view) {
         finishAffinity();
     }
+
     private void setUserStatus(String status) {
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEY_USER_STATUS, status);
         editor.apply();
     }
+
     private void afficherCompositionMedicament(Medicament medicament) {
         List<String> composition = dbHelper.getCompositionMedicament(medicament.getCodeCIS());
+        List<String> presentation = dbHelper.getPresentationMedicament(medicament.getCodeCIS());
 
         // Afficher la composition du médicament dans une boîte de dialogue ou autre méthode d'affichage
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Composition de " + medicament.getDenomination());
+        builder.setTitle("Composition et présentation de " + medicament.getDenomination());
+        StringBuilder boiteText = new StringBuilder();
+
         if (composition.isEmpty()) {
-            builder.setMessage("Aucune composition disponible pour ce médicament.");
+            boiteText.append("Pas de composition").append("\n");
         } else {
-            StringBuilder compositionText = new StringBuilder();
+            boiteText.append("Composition : \n");
             for (String item : composition) {
-                compositionText.append(item).append("\n");
+                boiteText.append(item).append("\n");
             }
-            builder.setMessage(compositionText.toString());
+
+            if (presentation.isEmpty()) {
+                boiteText.append("Pas de presentation").append("\n");
+            } else {
+                boiteText.append("Présentation : \n");
+                for (String item : presentation) {
+                    boiteText.append(item).append("\n");
+                }
+                builder.setMessage(boiteText.toString());
+            }
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 }
